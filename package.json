@@ -15,11 +15,26 @@
     "start:debug": "nest start --debug --watch",
     "start:prod": "node dist/main",
     "lint": "eslint \"{src,apps,libs,test}/**/*.ts\" --fix",
+    "precommit": "lint-staged",
     "test": "jest",
     "test:watch": "jest --watch",
     "test:cov": "jest --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
-    "test:e2e": "jest --config ./test/jest-e2e.json"
+    "test:e2e": "jest --config ./test/jest-e2e.json",
+    "typeorm": "node --require ts-node/register ./node_modules/typeorm/cli.js",
+    "seed:config": "ts-node ./node_modules/typeorm-seeding/dist/cli.js config",
+    "seed:run": "ts-node ./node_modules/typeorm-seeding/dist/cli.js seed",
+    "schema:drop": "ts-node ./node_modules/typeorm/cli.js schema:drop",
+    "schema:sync": "ts-node ./node_modules/typeorm/cli.js schema:sync",
+    "db:migrate": "npm run typeorm migration:run -- -d ./dataSource.ts",
+    "db:migrate:revert": "npm run typeorm -- -d ./dataSource.ts migration:revert",
+    "db:create-migration": "npm run typeorm -- migration:create ./src/migrations/$npm_config_name",
+    "db:generate-migration": "npm run typeorm -- migration:generate ./src/migrations/$npm_config_name -d ./dataSource.ts"
+  },
+  "lint-staged": {
+    "./**/*": [
+      "eslint --fix src"
+    ]
   },
   "dependencies": {
     "@nestjs/common": "^9.0.0",
@@ -27,9 +42,13 @@
     "@nestjs/core": "^9.0.0",
     "@nestjs/platform-express": "^9.0.0",
     "@nestjs/swagger": "^6.0.5",
+    "@nestjs/typeorm": "^9.0.1",
+    "mysql2": "^2.3.3",
     "reflect-metadata": "^0.1.13",
     "rimraf": "^3.0.2",
-    "rxjs": "^7.2.0"
+    "rxjs": "^7.2.0",
+    "typeorm": "^0.3.7",
+    "typeorm-seeding": "^1.6.1"
   },
   "devDependencies": {
     "@nestjs/cli": "^9.0.0",
@@ -44,7 +63,9 @@
     "eslint": "^8.0.1",
     "eslint-config-prettier": "^8.3.0",
     "eslint-plugin-prettier": "^4.0.0",
+    "husky": "^8.0.1",
     "jest": "28.1.2",
+    "lint-staged": "^13.0.3",
     "prettier": "^2.3.2",
     "run-script-webpack-plugin": "^0.1.1",
     "source-map-support": "^0.5.20",
@@ -53,6 +74,7 @@
     "ts-loader": "^9.2.3",
     "ts-node": "^10.0.0",
     "tsconfig-paths": "4.0.0",
+    "typeorm-model-generator": "^0.4.6",
     "typescript": "^4.3.5",
     "webpack": "^5.74.0",
     "webpack-node-externals": "^3.0.0"
