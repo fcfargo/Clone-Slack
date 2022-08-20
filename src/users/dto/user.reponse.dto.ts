@@ -1,11 +1,4 @@
-import { ApiProperty } from '@nestjs/swagger';
-import { JoinRequestDto } from './join.request.dto';
+import { PickType } from '@nestjs/swagger';
+import { Users } from '../../entities/Users';
 
-export class UserResponseDto extends JoinRequestDto {
-  @ApiProperty({
-    example: 1,
-    description: '유저 id',
-    required: true,
-  })
-  public id: number;
-}
+export class UserResponseDto extends PickType(Users, ['id', 'email', 'nickname', 'password'] as const) {}
