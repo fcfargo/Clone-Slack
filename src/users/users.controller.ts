@@ -20,9 +20,10 @@ export class UsersController {
 
   @ApiOperation({ summary: '회원가입' })
   @Post()
-  createUser(@Body() data: JoinRequestDto) {
-    this.usersService.postUsers(data.email, data.nickname, data.password);
+  async createUser(@Body() body: JoinRequestDto) {
+    await this.usersService.createUserData(body.email, body.nickname, body.password);
   }
+
   @ApiResponse({ status: 200, description: '요청 성공', type: UserResponseDto })
   @ApiResponse({ status: 500, description: '서버 에러' })
   @ApiOperation({ summary: '로그인' })
