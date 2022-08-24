@@ -17,6 +17,7 @@ import { DMs } from './entities/DMs';
 import { Mentions } from './entities/Mentions';
 import { WorkspaceMembers } from './entities/WorkspaceMembers';
 import { Workspaces } from './entities/Workspaces';
+import { AuthModule } from './auth/auth.module';
 
 @Module({
   imports: [
@@ -36,6 +37,7 @@ import { Workspaces } from './entities/Workspaces';
       logging: true,
     }),
     TypeOrmModule.forFeature([Users]),
+    AuthModule,
     UsersModule,
     DmsModule,
     ChannelsModule,
