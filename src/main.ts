@@ -3,6 +3,9 @@ import { NestFactory } from '@nestjs/core';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import { AppModule } from './app.module';
 import { HttpExceptionFilter } from './httpException.filter';
+import passport from 'passport';
+import cookieParser from 'cookie-parser';
+import session from 'express-session';
 
 declare const module: any;
 
@@ -27,6 +30,25 @@ async function bootstrap() {
     .build();
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('swagger', app, document);
+
+  // cookiParser
+  app.use(cookieParser());
+
+  // express-session
+  app.use(
+    session({
+      resave: false,
+      saveUninitialized: false,
+      secret: process.env.COOKIE_SECRET,
+      cookie: {
+        httpOnly: true,
+      },
+    }),
+  );
+
+  // passport 설정
+  app.use(passport.initialize());
+  app.use(passport.session());
 
   await app.listen(port);
   console.log(`listening on port ${port}`);
