@@ -8,6 +8,7 @@ import { UsersService } from './users.service';
 import { LocalAuthGuard } from '../auth/local-auth.guard';
 import { LoggedInGuard } from 'src/auth/logged-in.guard';
 import { NotLoggedInGuard } from 'src/auth/not-logged-in.guard';
+import { Users } from 'src/entities/Users';
 
 @UseInterceptors(undefinedToNullInterceptor)
 @ApiTags('USER')
@@ -19,7 +20,7 @@ export class UsersController {
   @ApiResponse({ status: 500, description: '서버 에러' })
   @ApiOperation({ summary: '내 정보 조회' })
   @Get()
-  getUsers(@User() user) {
+  getUsers(@User() user: Users) {
     return user || false;
   }
 
@@ -36,7 +37,7 @@ export class UsersController {
   @ApiOperation({ summary: '로그인' })
   @UseGuards(new LocalAuthGuard())
   @Post('login')
-  SignIn(@User() user) {
+  SignIn(@User() user: Users) {
     // 인증이 완료되면 local.serializer.ts를 거쳐, user.decorator.ts의 @User 데코레이터가 반환한 request.user 값이 user 변수에 할당된다.
     // @User 데코레이터를 로직을 거치면 req 객체의 전체 데이터 대신, req.user 데이터를 가져온다.
     // controller에서 req 객체 접근 횟수가 증가할수록, 추후 req 객체를 제공하는 플랫폼(express) 변경 시 유지 보수가 어려워진다. 이를 위해 @User 데코레이터를 사용하는 것이다.
