@@ -36,7 +36,7 @@ import { AuthModule } from './auth/auth.module';
       synchronize: false,
       logging: true,
     }),
-    TypeOrmModule.forFeature([Users, WorkspaceMembers, ChannelMembers]),
+    TypeOrmModule.forFeature([Users, WorkspaceMembers, ChannelMembers, WorkspaceMembers, Workspaces, Mentions, Channels, ChannelChats]),
     AuthModule,
     UsersModule,
     DmsModule,
