@@ -38,7 +38,7 @@ export class UsersController {
   @Post('login')
   SignIn(@User() user) {
     // 인증이 완료되면 local.serializer.ts를 거쳐, user.decorator.ts의 @User 데코레이터가 반환한 request.user 값이 user 변수에 할당된다.
-    // @User 데코레이터를 로직을 거치면 req 객체의 전체 데이터 대신, req 객체의 user 변수의 데이터만 user 변수에 할당된다..
+    // @User 데코레이터를 로직을 거치면 req 객체의 전체 데이터 대신, req.user 데이터를 가져온다.
     // controller에서 req 객체 접근 횟수가 증가할수록, 추후 req 객체를 제공하는 플랫폼(express) 변경 시 유지 보수가 어려워진다. 이를 위해 @User 데코레이터를 사용하는 것이다.
     return user;
   }
@@ -47,8 +47,8 @@ export class UsersController {
   @ApiOperation({ summary: '로그아웃' })
   @Post('logout')
   SignOut(@Req() req, @Res() res) {
-    // 로그아웃 기능에서 logOut() 메서드 사용하려면 req 객체를 controller로 가져오는 것이 불가피하다.
-    req.logOut();
+    // 로그아웃 기능에서 clearCookie 메서드 사용하려면 req 객체를 controller로 가져오는 것이 불가피하다.
+    // req.logOut();
     // 로그아웃 풀기
     res.clearCookie('connect.sid', { httpOnly: true });
     res.send('ok');
