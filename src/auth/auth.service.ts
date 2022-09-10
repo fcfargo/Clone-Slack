@@ -12,9 +12,8 @@ export class AuthService {
     // router 요청이 발생하면 DB에서 email로 유저 정보를 검색
     const user = await this.usersRepository.findOne({
       where: { email },
-      select: ['id', 'email', 'password'],
+      select: ['id', 'email', 'password', 'nickname'],
     });
-    console.log(email, password, user);
     if (!user) {
       return null;
     }

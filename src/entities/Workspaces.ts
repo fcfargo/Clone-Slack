@@ -16,7 +16,7 @@ import { DMs } from './DMs';
 import { Mentions } from './Mentions';
 import { WorkspaceMembers } from './WorkspaceMembers';
 import { Users } from './Users';
-import { IsNotEmpty, IsNumber, IsString } from 'class-validator';
+import { isDate, IsDate, IsDateString, IsNotEmpty, isNumber, IsNumber, IsString } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 
 @Index('name', ['name'], { unique: true })
@@ -24,6 +24,12 @@ import { ApiProperty } from '@nestjs/swagger';
 @Index('OwnerId', ['OwnerId'], {})
 @Entity({ schema: 'sleact', name: 'workspaces' })
 export class Workspaces {
+  @IsNumber()
+  @IsNotEmpty()
+  @ApiProperty({
+    example: '1',
+    description: '워크스페이스 id',
+  })
   @PrimaryGeneratedColumn({ type: 'int', name: 'id' })
   id: number;
 
@@ -45,15 +51,39 @@ export class Workspaces {
   @Column('varchar', { name: 'url', unique: true, length: 30 })
   url: string;
 
+  @IsDateString()
+  @IsNotEmpty()
+  @ApiProperty({
+    example: '2022-08-15T12:23:48.493Z',
+    description: '생성 일자',
+  })
   @CreateDateColumn()
   createdAt: Date;
 
+  @IsDateString()
+  @IsNotEmpty()
+  @ApiProperty({
+    example: '2022-08-15T12:23:48.493Z',
+    description: '수정 일자',
+  })
   @UpdateDateColumn()
   updatedAt: Date;
 
+  @IsDateString()
+  @IsNotEmpty()
+  @ApiProperty({
+    example: '2022-08-15T12:23:48.493Z',
+    description: '삭제 일자',
+  })
   @DeleteDateColumn()
   deletedAt: Date | null;
 
+  @IsNumber()
+  @IsNotEmpty()
+  @ApiProperty({
+    example: 1,
+    description: '워크스페이스 소유자 uid',
+  })
   @Column('int', { name: 'OwnerId', nullable: true })
   OwnerId: number | null;
 

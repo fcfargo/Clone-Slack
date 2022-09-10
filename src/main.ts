@@ -2,7 +2,7 @@ import { ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import { AppModule } from './app.module';
-import { HttpExceptionFilter } from './httpException.filter';
+import { HttpExceptionFilter } from './http-exception.filter';
 import passport from 'passport';
 import cookieParser from 'cookie-parser';
 import session from 'express-session';
@@ -21,7 +21,7 @@ async function bootstrap() {
   // class-validator
   app.useGlobalPipes(new ValidationPipe());
 
-  // sagger 문서 설정
+  // swagger 문서 설정
   const config = new DocumentBuilder()
     .setTitle('Sleact API')
     .setDescription('Sleact 개발을 위한 API 문서입니다.')

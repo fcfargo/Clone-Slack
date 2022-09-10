@@ -1,5 +1,5 @@
-import { Body, Controller, Get, Post, Req, Res, UseGuards, UseInterceptors } from '@nestjs/common';
-import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { Body, Controller, Get, HttpCode, Post, Req, Res, UseGuards, UseInterceptors } from '@nestjs/common';
+import { ApiBody, ApiCookieAuth, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { undefinedToNullInterceptor } from 'src/common/interceptors/undefinedToNull.interceptor';
 import { User } from '../common/decorators/user.decorator';
 import { JoinRequestDto } from './dto/join.request.dto';
@@ -9,33 +9,39 @@ import { LocalAuthGuard } from '../auth/local-auth.guard';
 import { LoggedInGuard } from 'src/auth/logged-in.guard';
 import { NotLoggedInGuard } from 'src/auth/not-logged-in.guard';
 import { Users } from 'src/entities/Users';
+import { GetUserResponseDto } from './dto/get-user.response.dto';
+import { LoginRequestDto } from './dto/login.request.dto';
 
 @UseInterceptors(undefinedToNullInterceptor)
-@ApiTags('USER')
+@ApiTags('USERS')
 @Controller('api/users')
 export class UsersController {
   constructor(private usersService: UsersService) {}
 
-  @ApiResponse({ status: 200, description: '성공', type: UserResponseDto })
   @ApiResponse({ status: 500, description: '서버 에러' })
+  @ApiResponse({ status: 200, description: '성공', type: GetUserResponseDto })
+  @ApiCookieAuth('connect.sid')
   @ApiOperation({ summary: '내 정보 조회' })
   @Get()
   getUsers(@User() user: Users) {
     return user || false;
   }
 
+  @ApiResponse({ status: 500, description: '서버 에러' })
   @ApiResponse({ status: 201, description: '성공', type: UserResponseDto })
-  @UseGuards(new NotLoggedInGuard())
   @ApiOperation({ summary: '회원가입' })
+  @UseGuards(new NotLoggedInGuard())
   @Post()
   async createUser(@Body() body: JoinRequestDto) {
     return await this.usersService.createUserData(body.email, body.nickname, body.password);
   }
 
-  @ApiResponse({ status: 200, description: '요청 성공', type: UserResponseDto })
   @ApiResponse({ status: 500, description: '서버 에러' })
+  @ApiResponse({ status: 200, description: '요청 성공', type: UserResponseDto })
+  @ApiBody({ type: LoginRequestDto })
   @ApiOperation({ summary: '로그인' })
   @UseGuards(new LocalAuthGuard())
+  @HttpCode(200)
   @Post('login')
   SignIn(@User() user: Users) {
     // 인증이 완료되면 local.serializer.ts를 거쳐, user.decorator.ts의 @User 데코레이터가 반환한 request.user 값이 user 변수에 할당된다.
@@ -44,6 +50,9 @@ export class UsersController {
     return user;
   }
 
+  @ApiResponse({ status: 500, description: '서버 에러' })
+  @ApiResponse({ status: 200, description: '요청 성공', schema: { example: 'ok' } })
+  @ApiCookieAuth('connect.sid')
   @UseGuards(new LoggedInGuard())
   @ApiOperation({ summary: '로그아웃' })
   @Post('logout')
