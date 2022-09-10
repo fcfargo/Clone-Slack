@@ -5,7 +5,6 @@ import { UsersService } from './users/users.service';
 export class AppService {
   constructor(private userService: UsersService) {}
   getHello(): string {
-    this.userService.getUser();
     return process.env.SECRET;
   }
 }

@@ -18,7 +18,7 @@ import { Mentions } from './Mentions';
 import { WorkspaceMembers } from './WorkspaceMembers';
 import { Workspaces } from './Workspaces';
 import { ApiProperty } from '@nestjs/swagger';
-import { IsEmail, IsNotEmpty, IsString } from 'class-validator';
+import { IsArray, IsEmail, IsNotEmpty, IsString } from 'class-validator';
 
 @Index('email', ['email'], { unique: true })
 @Entity({ schema: 'sleact', name: 'users' })
@@ -89,6 +89,21 @@ export class Users {
   @OneToMany(() => Workspaces, (workspaces) => workspaces.Owner)
   OwnedWorkspaces: Workspaces[];
 
+  @IsArray()
+  @ApiProperty({
+    example: [
+      {
+        id: 1,
+        name: 'Sleact',
+        url: 'sleact',
+        createdAt: '2022-08-15T12:23:48.493Z',
+        updatedAt: '2022-08-15T12:23:48.493Z',
+        deletedAt: null,
+        OwnerId: null,
+      },
+    ],
+    description: '소속 워크스페이스 정보',
+  })
   @ManyToMany(() => Workspaces, (workspaces) => workspaces.Members)
   @JoinTable({
     name: 'workspacemembers',

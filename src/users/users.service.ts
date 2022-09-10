@@ -16,13 +16,11 @@ export class UsersService {
     @InjectRepository(ChannelMembers)
     private channelMembersRepository: Repository<ChannelMembers>,
     // queryRunner() 사용을 위한 의존성 주입
-    private dataSoruce: DataSource,
+    private dataSource: DataSource,
   ) {}
 
-  getUser() {}
-
   async createUserData(email: string, nickname: string, password: string) {
-    const queryRunner = this.dataSoruce.createQueryRunner();
+    const queryRunner = this.dataSource.createQueryRunner();
     await queryRunner.connect();
     await queryRunner.startTransaction();
     // email 중복 확인
@@ -49,9 +47,6 @@ export class UsersService {
         UserId: newUser.id,
         WorkspaceId: 1,
       });
-
-      // transaction rollback 정상 작동 테스트를 위해 에러를 발생시킴
-      // throw new Error('rollback test');
 
       // 회원 기본 channel 제공
       await queryRunner.manager.getRepository(ChannelMembers).save({
