@@ -8,9 +8,10 @@ import { ChannelMembers } from 'src/entities/ChannelMembers';
 import { Users } from 'src/entities/Users';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ChannelChats } from 'src/entities/ChannelChats';
+import { EventsModule } from 'src/events/events.module';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Workspaces, Channels, WorkspaceMembers, ChannelMembers, Users, ChannelChats])],
+  imports: [TypeOrmModule.forFeature([Workspaces, Channels, WorkspaceMembers, ChannelMembers, Users, ChannelChats]), EventsModule],
   providers: [ChannelsService],
   controllers: [ChannelsController],
 })

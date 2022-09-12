@@ -81,36 +81,11 @@ export class ChannelsController {
     return this.channelsService.getChannelUnreadsCount(url, name, after);
   }
 
-  // @ApiResponse({ status: 500, description: '서버 에러,' })
-  // @ApiResponse({ status: 201, description: '성공' })
-  // @ApiOperation({ summary: '워크스페이스 특정 채널 채팅 생성하기' })
-  // @Post(':name/chats')
-  // async createWorkspaceChannelChats(@Param('url') url: string, @Param('name') name: string, @Body() body: PostChatDto, @User() user: Users) {
-  //   return this.channelsService.createWorkspaceChannelChats(url, name, body.content, user.id);
-  // }
-
-  // @ApiResponse({ status: 500, description: '서버 에러,' })
-  // @ApiResponse({ status: 200, description: '성공' })
-  // @ApiOperation({ summary: '워크스페이스 특정 채널 이미지 업로드하기' })
-  // @UseInterceptors(
-  //   FilesInterceptor('image', 10, {
-  //     storage: multer.diskStorage({
-  //       destination(req, file, cb) {
-  //         cb(null, 'uploads/');
-  //       },
-  //       filename(req, file, cb) {
-  //         const ext = path.extname(file.originalname);
-  //         cb(null, path.basename(file.originalname, ext) + Date.now() + ext);
-  //       },
-  //     }),
-  //     limits: { fileSize: 5 * 1024 * 1024 }, // 5MB
-  //   }),
-  // )
-
-  // @ApiResponse({ status: 500, description: '서버 에러,' })
-  // @ApiResponse({ status: 200, description: '성공' })
-  // @Post(':url/channels/:name/images')
-  // async createWorkspaceChannelImages(@Param('url') url, @Param('name') name, @UploadedFiles() files: Express.Multer.File[], @User() user: Users) {
-  //   return this.channelsService.createWorkspaceChannelImages(url, name, files, user.id);
-  // }
+  @ApiResponse({ status: 500, description: '서버 에러,' })
+  @ApiResponse({ status: 201, description: '성공' })
+  @ApiOperation({ summary: '워크스페이스 특정 채널 채팅 생성하기' })
+  @Post(':name/chats')
+  async createWorkspaceChannelChats(@Param('url') url: string, @Param('name') name: string, @Body() body: PostChatDto, @User() user: Users) {
+    return this.channelsService.createWorkspaceChannelChats(url, name, body.content, user.id);
+  }
 }
