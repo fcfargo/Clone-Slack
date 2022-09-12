@@ -6,6 +6,7 @@ import { Channels } from 'src/entities/Channels';
 import { Users } from 'src/entities/Users';
 import { WorkspaceMembers } from 'src/entities/WorkspaceMembers';
 import { Workspaces } from 'src/entities/Workspaces';
+import { EventsGateway } from 'src/events/events.gateway';
 import { Repository, DataSource, MoreThan } from 'typeorm';
 
 @Injectable()
@@ -25,6 +26,8 @@ export class ChannelsService {
     private channelChatsRepository: Repository<ChannelChats>,
 
     private dataSource: DataSource,
+
+    private eventsGateway: EventsGateway,
   ) {}
 
   /** 유저가 소속된 워크스페이스 채널 모두 가져오기 */
@@ -166,71 +169,28 @@ export class ChannelsService {
     });
   }
 
-  // /** 워크스페이스 채널 채팅 생성하기*/
-  // async createWorkspaceChannelChats(url: string, name: string, content: string, myId: number) {
-  //   const channel = await this.channelsRepository
-  //     .createQueryBuilder('channel')
-  //     .innerJoin('channel.Workspace', 'workspace', 'workspace.url = :url', {
-  //       url,
-  //     })
-  //     .where('channel.name = :name', { name })
-  //     .getOne();
-  //   const chats = new ChannelChats();
-  //   chats.content = content;
-  //   chats.UserId = myId;
-  //   chats.ChannelId = channel.id;
-  //   const savedChat = await this.channelChatsRepository.save(chats);
-  //   const chatWithUser = await this.channelChatsRepository.findOne({
-  //     where: { id: savedChat.id },
-  //     relations: ['User', 'Channel'],
-  //   });
-  //   this.eventsGateway.server
-  //     // .of(`/ws-${url}`)
-  //     .to(`/ws-${url}-${chatWithUser.ChannelId}`)
-  //     .emit('message', chatWithUser);
-  // }
-
-  // // 넘겨받은 데이터를 DB에 저장 후 웹 소켓으로 전송
-  // async sendChatMessage({ url, name, content, uid }) {
-  //   const channel = await this.channelsRepository
-  //     .createQueryBuilder('channel')
-  //     .innerJoin('channel.Workspace', 'workspace', 'workspace.url = :url', { url })
-  //     .where('channel.name = :name', { name })
-  //     .getOne();
-  //   if (!channel) throw new NotFoundException('채널이 존재하지 않습니다.');
-
-  //   const chats = new ChannelChats();
-  //   chats.content = content;
-  //   chats.UserId = uid;
-  //   const createdChat = await this.channelChatsRepository.save(chats);
-  //   const chatWithUser = await this.channelChatsRepository.findOne({ where: { id: createdChat.id }, relations: ['User', 'Channel'] });
-
-  //   // socket.io를 통해 웻 소켓으로 전송 -> 프론트엔드에서 전송된 데이터를 url 및 name 과 일치하는 채널 사용자들이 볼 수 있도록 수신자 범위 조정해줌
-  // }
-
-  // async createWorkspaceChannelImages(url: string, name: string, files: Express.Multer.File[], myId: number) {
-  //   console.log(files);
-  //   const channel = await this.channelsRepository
-  //     .createQueryBuilder('channel')
-  //     .innerJoin('channel.Workspace', 'workspace', 'workspace.url = :url', {
-  //       url,
-  //     })
-  //     .where('channel.name = :name', { name })
-  //     .getOne();
-  //   for (let i = 0; i < files.length; i++) {
-  //     const chats = new ChannelChats();
-  //     chats.content = files[i].path;
-  //     chats.UserId = myId;
-  //     chats.ChannelId = channel.id;
-  //     const savedChat = await this.channelChatsRepository.save(chats);
-  //     const chatWithUser = await this.channelChatsRepository.findOne({
-  //       where: { id: savedChat.id },
-  //       relations: ['User', 'Channel'],
-  //     });
-  //     this.eventsGateway.server
-  //       // .of(`/ws-${url}`)
-  //       .to(`/ws-${url}-${chatWithUser.ChannelId}`)
-  //       .emit('message', chatWithUser);
-  //   }
-  // }
+  /** 워크스페이스 채널 채팅 생성하기(넘겨받은 데이터를 DB에 저장 후 메시지를 웹 소켓으로 실시간 전송)*/
+  async createWorkspaceChannelChats(url: string, name: string, content: string, myId: number) {
+    const channel = await this.channelsRepository
+      .createQueryBuilder('channel')
+      .innerJoin('channel.Workspace', 'workspace', 'workspace.url = :url', {
+        url,
+      })
+      .where('channel.name = :name', { name })
+      .getOne();
+    const chats = new ChannelChats();
+    chats.content = content;
+    chats.UserId = myId;
+    chats.ChannelId = channel.id;
+    const savedChat = await this.channelChatsRepository.save(chats);
+    const chatWithUser = await this.channelChatsRepository.findOne({
+      where: { id: savedChat.id },
+      relations: ['User', 'Channel'],
+    });
+    // socket.io를 통해 메시지를 웻 소켓으로 실시간 전송 -> 프론트엔드에서 전송된 데이터를 url 및 name 과 일치하는 채널 사용자들이 볼 수 있도록 수신자 범위 조정해줌
+    this.eventsGateway.server
+      // .of(`/ws-${url}`)
+      .to(`/ws-${url}-${chatWithUser.ChannelId}`)
+      .emit('message', chatWithUser);
+  }
 }
