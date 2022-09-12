@@ -1,6 +1,5 @@
 import { Controller, Post, Get, Delete, Body, UseGuards, Param, ParseIntPipe } from '@nestjs/common';
-import { ApiBody, ApiCookieAuth, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
-import { IsNotEmpty } from 'class-validator';
+import { ApiCookieAuth, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { LoggedInGuard } from 'src/auth/logged-in.guard';
 import { User } from 'src/common/decorators/user.decorator';
 import { Users } from 'src/entities/Users';
@@ -36,7 +35,7 @@ export class WorkspacesController {
 
   @ApiResponse({ status: 500, description: '서버 에러' })
   @ApiResponse({
-    status: 201,
+    status: 200,
     description: '성공',
     type: UserResponseDto,
   })
